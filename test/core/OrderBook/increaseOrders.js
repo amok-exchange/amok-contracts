@@ -121,7 +121,8 @@ describe("OrderBook, increase position orders", function () {
             bnb.address,
             usdg.address,
             minExecutionFee,
-            expandDecimals(5, 30) // minPurchseTokenAmountUsd
+            expandDecimals(5, 30), // minPurchseTokenAmountUsd
+            true // minProfitValidationEnabled
         );
 
         await router.addPlugin(orderBook.address);
@@ -270,7 +271,8 @@ describe("OrderBook, increase position orders", function () {
             isLong: true,
             triggerPrice: defaults.triggerPrice,
             triggerAboveThreshold: true,
-            executionFee: defaults.executionFee
+            executionFee: defaults.executionFee,
+            allowMinProfitLoss: false
         });
     });
 

@@ -50,6 +50,7 @@ function defaultCreateIncreaseOrderFactory(orderBook, defaults) {
             getDefault(props, 'isLong', defaults.isLong),
             getDefault(props, 'triggerPrice', defaults.triggerPrice),
             getDefault(props, 'triggerAboveThreshold', defaults.triggerAboveThreshold),
+            getDefault(props, 'allowMinProfitLoss', false),
             getDefault(props, 'executionFee', defaults.executionFee),
             getDefault(props, 'shouldWrap', defaults.shouldWrap),
             {value: getDefault(props, 'value', props.executionFee || defaults.executionFee)}
@@ -67,6 +68,7 @@ function defaultCreateDecreaseOrderFactory(orderBook, defaults) {
             getDefault(props, 'isLong', defaults.isLong),
             getDefault(props, 'triggerPrice', defaults.triggerPrice),
             getDefault(props, 'triggerAboveThreshold', defaults.triggerAboveThreshold),
+            getDefault(props, 'allowMinProfitLoss', false),
             {value: getDefault(props, 'value', props.executionFee || defaults.executionFee)}
         );
     }

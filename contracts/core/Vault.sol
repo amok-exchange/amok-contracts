@@ -944,7 +944,7 @@ contract Vault is ReentrancyGuard, IVault {
         return (hasProfit, delta);
     }
 
-    function getPositionDelta(address _account, address _collateralToken, address _indexToken, bool _isLong) public view returns (bool, uint256) {
+    function getPositionDelta(address _account, address _collateralToken, address _indexToken, bool _isLong) public override view returns (bool, uint256) {
         bytes32 key = getPositionKey(_account, _collateralToken, _indexToken, _isLong);
         Position memory position = positions[key];
         return getDelta(_indexToken, position.size, position.averagePrice, _isLong, position.lastIncreasedTime);

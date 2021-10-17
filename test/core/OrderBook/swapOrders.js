@@ -94,7 +94,8 @@ describe("OrderBook, swap orders", function () {
             bnb.address,
             usdg.address,
             minExecutionFee,
-            expandDecimals(5, 30) // minPurchseTokenAmountUsd
+            expandDecimals(5, 30), // minPurchseTokenAmountUsd
+            true // minProfitValidationEnabled
         );
 
         await router.addPlugin(orderBook.address);
