@@ -1,5 +1,5 @@
-# GMX Contracts
-Contracts for GMX.
+# AMOK Contracts
+Contracts for AMOK. Forked GMX. Respect to our friends.
 
 ## Install Dependencies
 If npx is not installed yet:

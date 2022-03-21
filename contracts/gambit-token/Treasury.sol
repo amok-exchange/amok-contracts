@@ -7,7 +7,7 @@ import "../libraries/token/IERC20.sol";
 import "../libraries/utils/ReentrancyGuard.sol";
 
 import "../amm/interfaces/IPancakeRouter.sol";
-import "./interfaces/IGMT.sol";
+import "./interfaces/IAMT.sol";
 import "../peripherals/interfaces/ITimelockTarget.sol";
 
 contract Treasury is ReentrancyGuard, ITimelockTarget {
@@ -20,7 +20,7 @@ contract Treasury is ReentrancyGuard, ITimelockTarget {
     bool public isSwapActive = true;
     bool public isLiquidityAdded = false;
 
-    address public gmt;
+    address public amt;
     address public busd;
     address public router;
     address public fund;
@@ -55,7 +55,7 @@ contract Treasury is ReentrancyGuard, ITimelockTarget {
         require(!isInitialized, "Treasury: already initialized");
         isInitialized = true;
 
-        gmt = _addresses[0];
+        amt = _addresses[0];
         busd = _addresses[1];
         router = _addresses[2];
         fund = _addresses[3];
@@ -121,7 +121,7 @@ contract Treasury is ReentrancyGuard, ITimelockTarget {
 
         // send GMT
         uint256 gmtAmount = _busdAmount.mul(PRECISION).div(gmtPresalePrice);
-        IERC20(gmt).transfer(account, gmtAmount);
+        IERC20(amt).transfer(account, gmtAmount);
     }
 
     function addLiquidity() external onlyGov nonReentrant {
@@ -132,13 +132,13 @@ contract Treasury is ReentrancyGuard, ITimelockTarget {
         uint256 gmtAmount = busdAmount.mul(PRECISION).div(gmtListingPrice);
 
         IERC20(busd).approve(router, busdAmount);
-        IERC20(gmt).approve(router, gmtAmount);
+        IERC20(amt).approve(router, gmtAmount);
 
-        IGMT(gmt).endMigration();
+        IAMT(amt).endMigration();
 
         IPancakeRouter(router).addLiquidity(
             busd, // tokenA
-            gmt, // tokenB
+            amt, // tokenB
             busdAmount, // amountADesired
             gmtAmount, // amountBDesired
             0, // amountAMin
@@ -147,7 +147,7 @@ contract Treasury is ReentrancyGuard, ITimelockTarget {
             block.timestamp // deadline
         );
 
-        IGMT(gmt).beginMigration();
+        IAMT(amt).beginMigration();
 
         uint256 fundAmount = busdReceived.sub(busdAmount);
         IERC20(busd).transfer(fund, fundAmount);

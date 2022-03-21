@@ -4,14 +4,14 @@ pragma solidity 0.6.12;
 
 import "../libraries/math/SafeMath.sol";
 import "../libraries/token/IERC20.sol";
-import "./interfaces/IGMT.sol";
+import "./interfaces/IAMT.sol";
 import "../peripherals/interfaces/ITimelockTarget.sol";
 
-contract GMT is IERC20, IGMT, ITimelockTarget {
+contract AMT is IERC20, IAMT, ITimelockTarget {
     using SafeMath for uint256;
 
-    string public constant name = "Gambit";
-    string public constant symbol = "GMT";
+    string public constant name = "Amok Token";
+    string public constant symbol = "AMT";
     uint8 public constant decimals = 18;
 
     uint256 public override totalSupply;
@@ -41,12 +41,12 @@ contract GMT is IERC20, IGMT, ITimelockTarget {
     mapping (address => bool) public allowedMsgSenders;
 
     modifier onlyGov() {
-        require(msg.sender == gov, "GMT: forbidden");
+        require(msg.sender == gov, "AMT: forbidden");
         _;
     }
 
     modifier onlyAdmin() {
-        require(admins[msg.sender], "GMT: forbidden");
+        require(admins[msg.sender], "AMT: forbidden");
         _;
     }
 
@@ -69,12 +69,12 @@ contract GMT is IERC20, IGMT, ITimelockTarget {
     }
 
     function setNextMigrationTime(uint256 _migrationTime) external onlyGov {
-        require(_migrationTime > migrationTime, "GMT: invalid _migrationTime");
+        require(_migrationTime > migrationTime, "AMT: invalid _migrationTime");
         migrationTime = _migrationTime;
     }
 
     function beginMigration() external override onlyAdmin {
-        require(block.timestamp > migrationTime, "GMT: migrationTime not yet passed");
+        require(block.timestamp > migrationTime, "AMT: migrationTime not yet passed");
         hasActiveMigration = true;
     }
 
@@ -122,29 +122,29 @@ contract GMT is IERC20, IGMT, ITimelockTarget {
     }
 
     function transferFrom(address _sender, address _recipient, uint256 _amount) external override returns (bool) {
-        uint256 nextAllowance = allowances[_sender][msg.sender].sub(_amount, "GMT: transfer amount exceeds allowance");
+        uint256 nextAllowance = allowances[_sender][msg.sender].sub(_amount, "AMT: transfer amount exceeds allowance");
         _approve(_sender, msg.sender, nextAllowance);
         _transfer(_sender, _recipient, _amount);
         return true;
     }
 
     function _transfer(address _sender, address _recipient, uint256 _amount) private {
-        require(_sender != address(0), "GMT: transfer from the zero address");
-        require(_recipient != address(0), "GMT: transfer to the zero address");
+        require(_sender != address(0), "AMT: transfer from the zero address");
+        require(_recipient != address(0), "AMT: transfer to the zero address");
 
         if (hasActiveMigration) {
-            require(allowedMsgSenders[msg.sender], "GMT: forbidden msg.sender");
-            require(!blockedRecipients[_recipient], "GMT: forbidden recipient");
+            require(allowedMsgSenders[msg.sender], "AMT: forbidden msg.sender");
+            require(!blockedRecipients[_recipient], "AMT: forbidden recipient");
         }
 
-        balances[_sender] = balances[_sender].sub(_amount, "GMT: transfer amount exceeds balance");
+        balances[_sender] = balances[_sender].sub(_amount, "AMT: transfer amount exceeds balance");
         balances[_recipient] = balances[_recipient].add(_amount);
 
         emit Transfer(_sender, _recipient,_amount);
     }
 
     function _mint(address _account, uint256 _amount) private {
-        require(_account != address(0), "GMT: mint to the zero address");
+        require(_account != address(0), "AMT: mint to the zero address");
 
         totalSupply = totalSupply.add(_amount);
         balances[_account] = balances[_account].add(_amount);
@@ -153,8 +153,8 @@ contract GMT is IERC20, IGMT, ITimelockTarget {
     }
 
     function _approve(address _owner, address _spender, uint256 _amount) private {
-        require(_owner != address(0), "GMT: approve from the zero address");
-        require(_spender != address(0), "GMT: approve to the zero address");
+        require(_owner != address(0), "AMT: approve from the zero address");
+        require(_spender != address(0), "AMT: approve to the zero address");
 
         allowances[_owner][_spender] = _amount;
 
